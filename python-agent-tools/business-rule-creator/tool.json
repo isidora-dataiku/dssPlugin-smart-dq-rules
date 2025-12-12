@@ -1,0 +1,17 @@
+{
+    "id": "business-rule",
+    "meta": {
+        "label": "Create Business Rules",
+        "description": "Create data quality rules from business logic descriptions.",
+        "icon": "fas fa-briefcase"
+    },
+    "params": [
+        {
+            "name": "dataset",
+            "label": "Target Dataset",
+            "type": "DATASET",
+            "description": "Dataset where the rule will be created",
+            "mandatory": true
+        }
+    ]
+}

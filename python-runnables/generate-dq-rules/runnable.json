@@ -1,0 +1,123 @@
+/* This file is the descriptor for the python runnable generate-dq-rules */
+{
+    "meta": {
+        // label: name of the runnable as displayed, should be short
+        "label": "Generate Data Quality Rules",
+
+        // description: longer string to help end users understand what this runnable does
+        "description": "Auto-generates data quality rules based on statistical profiling, covering validity, ranges, and uniqueness for all column types. **Note: Best for SQL/In-memory datasets; S3/Spark is limited to dataset-level stability checks.**",
+
+        // icon: must be one of the FontAwesome 5.15.4 icons, complete list here at https://fontawesome.com/v5/docs/
+        "icon": "fas fa-check-double"
+    },
+
+    /* whether the runnable's code is untrusted */
+    "impersonate": false,
+
+    /* params:
+    DSS will generate a formular from this list of requested parameters.
+    Your component code can then access the value provided by users using the "name" field of each parameter.
+
+    Available parameter types include:
+    STRING, INT, DOUBLE, BOOLEAN, DATE, SELECT, TEXTAREA, DATASET, DATASET_COLUMN, MANAGED_FOLDER, PRESET and others.
+
+    For the full list and for more details, see the documentation: https://doc.dataiku.com/dss/latest/plugins/reference/params.html
+    */
+    "params": [
+        {
+            "name": "dataset_selection_mode",
+            "label": "Dataset selection",
+            "type": "SELECT",
+            "defaultValue": "single",
+            "selectChoices": [
+                { "value": "single", "label": "Single dataset" },
+                { "value": "multiple", "label": "Multiple datasets (select)" },
+                { "value": "all", "label": "All datasets in project" }
+            ],
+            "description": "Choose how many datasets to process",
+            "mandatory": true
+        },
+        {
+            "name": "input_dataset",
+            "label": "Dataset",
+            "type": "DATASET",
+            "description": "Single dataset to generate quality rules for",
+            "mandatory": false,
+            "visibilityCondition": "model.dataset_selection_mode == 'single'"
+        },
+        {
+            "name": "input_datasets",
+            "label": "Datasets",
+            "type": "DATASETS",
+            "description": "Select multiple datasets to generate quality rules for",
+            "mandatory": false,
+            "visibilityCondition": "model.dataset_selection_mode == 'multiple'"
+        },
+        {
+            "name": "sample_size",
+            "label": "Profile sample size",
+            "type": "INT",
+            "defaultValue": 10000,
+            "description": "Number of rows to sample for profiling (larger = more accurate but slower)",
+            "mandatory": true
+        },
+        {
+            "name": "strictness",
+            "label": "Rule strictness",
+            "type": "SELECT",
+            "defaultValue": "balanced",
+            "selectChoices": [
+                { "value": "lenient", "label": "Lenient - Wider ranges (mean ± 5σ), fewer rules" },
+                { "value": "balanced", "label": "Balanced - Standard ranges (mean ± 3σ)" },
+                { "value": "strict", "label": "Strict - Tighter ranges (mean ± 2σ), more rules" }
+            ],
+            "description": "How strict the generated rules should be",
+            "mandatory": true
+        },
+        {
+            "name": "enable_rules",
+            "label": "Enable rules after creation",
+            "type": "BOOLEAN",
+            "defaultValue": true,
+            "description": "If checked, rules will be enabled and ready to compute. If unchecked, rules will be created but disabled."
+        },
+        {
+            "name": "skip_existing",
+            "label": "Skip if rules already exist",
+            "type": "BOOLEAN",
+            "defaultValue": true,
+            "description": "If checked, skip datasets that already have data quality rules defined"
+        }
+    ],
+
+    /* list of required permissions on the project to see/run the runnable */
+    "permissions": ["WRITE_CONF"],
+
+    /* what the code's run() returns:
+       - NONE : no result
+       - HTML : a string that is a html (utf8 encoded)
+       - FOLDER_FILE : a (folderId, path) pair to a file in a folder of this project (json-encoded)
+       - FILE : raw data (as a python string) that will be stored in a temp file by DSS
+       - URL : a url
+     */
+    "resultType": "HTML",
+
+    /* label to use when the runnable's result is not inlined in the UI (ex: for urls) */
+    "resultLabel": "Data Quality Rules Generation Report",
+
+    /* Macro roles define where this macro will appear in DSS GUI. They are used to pre-fill a macro parameter with context.
+
+       Each role consists of:
+        - type: where the macro will be shown
+            * when selecting DSS object(s): DATASET, DATASETS, API_SERVICE, API_SERVICE_VERSION, BUNDLE, VISUAL_ANALYSIS, SAVED_MODEL, MANAGED_FOLDER
+            * in the global project list: PROJECT_MACROS
+        - targetParamsKey(s): name of the parameter(s) that will be filled with the selected object
+    */
+    "macroRoles": [
+        {
+            "type": "DATASET",
+            "targetParamsKey": "input_dataset",
+            "applicableToForeign": false
+        }
+    ]
+}

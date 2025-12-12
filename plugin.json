@@ -1,0 +1,31 @@
+{
+    // Plugin identifiers are globally unique and only contain A-Za-z0-9_-
+    "id": "smart-dq-rules-generator",
+    // It is highly recommended to use Semantic Versioning
+    "version": "0.2.0",
+    // Meta data for display purposes:
+    "meta": {
+        // label: name of the plugin as displayed, should be short
+        "label": "Smart Data Quality",
+        // description: longer string to help end users understand what this plugin does
+        "description": "Smart Data Quality is a comprehensive data quality toolkit with two powerful components:\n* A macros that allows users to auto-generate intelligent DQ rules via statistical profiling across single/multiple/all datasets\n* Create custom business rules through natural language conversation with AI agents.\nSupports regulatory compliance, business policy enforcement, and automated quality monitoring.",
+        "author": "Chad Kwiwon Covin",
+        // icon: must be one of the FontAwesome 5.15.4 icons, complete list here at https://fontawesome.com/v5/search?ic=free&o=r
+        "icon": "fas fa-check-double",
+        // recipesCategory: optional, can be one of 'visual', 'code', 'genai' or 'other'
+        // defines the category of the plugin in the right panel
+        "recipesCategory": "genai",
+        // List of tags for filtering the list of plugins
+        "tags": [
+            "Data Quality",
+            "Validation",
+            "Monitoring",
+            "AI",
+            "Business Rules",
+            "Compliance"
+        ],
+        // URL where the user can learn more about the plugin
+        "url": "https://github.com/yourusername/smart-dq-rules-generator",
+        "licenseInfo": "Apache Software License"
+    }
+}
