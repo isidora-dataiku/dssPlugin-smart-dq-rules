@@ -13,7 +13,7 @@ The Smart Data Quality Plugin automates the creation and management of data qual
 
 To install the Smart Data Quality Plugin, follow these steps:
 
-1. Download the plugin package from the Dataiku plugin store or [GitHub releases](https://github.com/YOUR-ORG/smart-dq-plugin/releases).
+1. Download the plugin package from the Dataiku plugin store or [GitHub releases](https://github.com/ckwonc/smart-dq-plugin/releases).
 2. In your Dataiku instance, navigate to Plugins > Add plugin > Upload and select the downloaded plugin package.
 3. Follow the on-screen instructions to complete the installation.
 4. For the Create Business Rules Tool: Add the tool to an AI agent using the GenAI menu.
