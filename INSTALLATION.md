@@ -1,226 +1,121 @@
-# Installation and Testing Guide
+# Installation Guide
 
-## 📦 Plugin Structure
+## Prerequisites
 
-```
-smart-dq-rules-generator/
-├── plugin.json                          # Plugin metadata
-├── README.md                            # User documentation
-├── python-runnables/
-│   └── generate-dq-rules/
-│       ├── runnable.json                # Macro UI configuration
-│       └── runnable.py                  # Main execution logic
-└── python-lib/
-    └── smartdqgen/
-        ├── __init__.py                  # Package init
-        ├── profiler.py                  # Phase 1: Dataset profiling
-        ├── rule_generator.py            # Phase 2: Rule generation
-        └── api_client.py                # Phase 3: API integration
-```
+Before installing the Smart Data Quality plugin, ensure you have:
 
-## 🚀 Installation Steps
+* Dataiku DSS version 12.0 or higher
+* Python 3.7+ code environment
+* Project-level or instance-level admin permissions
+* For Agent Tool: Access to create and configure AI agents
 
-### Method 1: Install from ZIP (Recommended)
+## Installation Steps
 
-1. **Create the plugin ZIP file**:
-   ```bash
-   cd /home/claude
-   zip -r smart-dq-rules-generator.zip smart-dq-rules-generator/
-   ```
+1. Download the latest release from [GitHub releases](https://github.com/ckwonc/dssPlugin-smart-dq-rules/releases)
+2. In your Dataiku instance, navigate to **Plugins** > **Add Plugin** > **Upload**
+3. Select the downloaded `.zip` file
+4. Choose installation scope (instance-level or project-level)
+5. Click **Install**
 
-2. **Upload to Dataiku**:
-   - Go to **Administration** > **Plugins**
-   - Click **+ Add Plugin** > **Upload**
-   - Select `smart-dq-rules-generator.zip`
-   - Click **Install**
+## Post-Installation Configuration
 
-3. **Verify Installation**:
-   - Plugin should appear in the plugins list
-   - Status should be "Loaded"
+### Setting Up the Macro
 
-### Method 2: Install from Dev Repository
+The macro is automatically available after installation. No additional configuration is required.
 
-1. **Clone/Copy to Dataiku**:
-   ```bash
-   # Copy entire directory to Dataiku's plugin development folder
-   cp -r smart-dq-rules-generator/ $DATAIKU_HOME/plugins/dev/
-   ```
+To verify:
+1. Open any Dataiku project
+2. Select a dataset
+3. Check the Actions menu for "Generate Data Quality Rules"
 
-2. **Reload Plugins**:
-   - Go to **Administration** > **Plugins**
-   - Click **Reload** (development mode)
+### Setting Up the Agent Tool
 
-## 🧪 Testing the Plugin
+1. **Navigate to Agent Tools**:
+   * Open any Dataiku project
+   * Click the **GenAI** dropdown in the top left corner
+   * Select **Agent Tools**
 
-### Test Dataset Setup
+2. **Add the Tool**:
+   * Click **+ Agent Tool**
+   * Select **Create Business Rules** from the list
 
-Use your existing `real_estate_sales_S3` dataset (converted to SQL):
+3. **Configure the Tool**:
+   * **Dataset**: Select the target dataset for rule creation
+   * **Description** (optional): Add context about the tool's purpose
+   * Click **Save**
 
-```sql
--- Dataset should have:
--- - Categorical columns: property_type
--- - Numeric columns: transaction_id, property_price, living_surface
--- - String columns: address
--- - Date columns: transaction_date
--- Approximately 10,000 rows
-```
+4. **Create or Update an Agent**:
+   * Go to **GenAI** > **Agents**
+   * Create a new agent or edit an existing one
+   * In the agent configuration, add the "Create Business Rules" tool
+   * Save the agent
 
-### Test Case 1: Basic Functionality
+## Code Environment
 
-1. **Navigate to your SQL dataset**
-2. **Click Actions (⋮) > Macros > Generate Smart Data Quality Rules**
-3. **Configure**:
-   - Sample size: 10000
-   - Strictness: Balanced
-   - Enable rules: ✓
-   - Skip existing: ✓
-4. **Click Run**
-5. **Expected Results**:
-   - HTML report shows 90%+ success rate
-   - ~50 rules created
-   - Processing time: 10-20 seconds
+The plugin uses Dataiku's built-in code environment. No additional configuration is required.
 
-### Test Case 2: Different Strictness Levels
+## Troubleshooting Installation
 
-**Test Lenient**:
-- Sample size: 10000
-- Strictness: Lenient
-- Expect: Wider ranges, fewer warnings
+### Plugin Won't Install
 
-**Test Strict**:
-- Sample size: 10000
-- Strictness: Strict
-- Expect: Tighter ranges, more warnings
+**Issue**: Error message during plugin upload
 
-### Test Case 3: Skip Existing Rules
+**Solutions**:
+* Verify you have admin permissions
+* Check that the `.zip` file is not corrupted
+* Ensure DSS version is 12.0 or higher
+* Review DSS logs for specific error messages
 
-1. **Run macro first time** - creates rules
-2. **Run macro second time** with "Skip existing" checked
-3. **Expected**: All rules skipped, no duplicates
+### Macro Not Appearing
 
-### Test Case 4: Small Sample Size
+**Issue**: "Generate Data Quality Rules" not visible in Actions menu
 
-1. **Configure**:
-   - Sample size: 1000
-   - Strictness: Balanced
-2. **Expected**: Faster execution (<5 seconds), less accurate thresholds
+**Solutions**:
+* Refresh the project page
+* Verify plugin is installed (check Plugins page)
+* Ensure you have proper permissions for the dataset
+* Try reinstalling the plugin
 
-## ✅ Validation Checklist
+### Agent Tool Not Available
 
-After installation, verify:
+**Issue**: "Create Business Rules" not appearing in agent tool list
 
-- [ ] Plugin appears in Plugins list
-- [ ] Macro appears in dataset Actions menu
-- [ ] Macro appears when right-clicking dataset in Flow
-- [ ] Macro runs without Python import errors
-- [ ] HTML report generates successfully
-- [ ] Rules appear in Data Quality tab
-- [ ] Rules can be computed successfully
-- [ ] Rules show OK/Warning/Error statuses
+**Solutions**:
+* Verify plugin is installed at the correct scope
+* Check that GenAI features are enabled in your DSS instance
+* Ensure you have permissions to create agent tools
+* Restart the DSS instance if necessary
 
-## 🐛 Troubleshooting
+### Code Environment Errors
 
-### Common Issues
+**Issue**: Import errors or missing packages
 
-**Issue**: "Module 'smartdqgen' not found"
-- **Solution**: Verify `python-lib/smartdqgen/__init__.py` exists
-- Check file permissions
+**Solutions**:
+* Update the plugin's code environment
+* Install missing dependencies manually
+* Check Python version compatibility (3.7+)
+* Review code environment logs in DSS
 
-**Issue**: "Dataset cannot be read"
-- **Solution**: Verify dataset is SQL-based, not S3/Spark
-- Check dataset permissions
+## Uninstallation
 
-**Issue**: "Rules fail to compute"
-- **Solution**: S3/Spark datasets only support dataset-level rules
-- Switch to SQL dataset for full functionality
+To remove the plugin:
 
-**Issue**: "High failure rate (>20%)"
-- **Solution**: Check Dataiku version (requires DSS 12+)
-- Verify Data Quality API is enabled
+1. Navigate to **Plugins**
+2. Find "Smart Data Quality"
+3. Click the settings icon
+4. Select **Uninstall**
+5. Confirm removal
 
-**Issue**: "Timeout errors"
-- **Solution**: Reduce sample size
-- Profile fewer columns
+**Note**: Uninstalling the plugin does not remove existing data quality rules. Rules created by the plugin will remain active.
 
-### Debug Mode
+## Upgrading
 
-To enable detailed logging, add to `runnable.py`:
+To upgrade to a newer version:
 
-```python
-import logging
-logging.basicConfig(level=logging.DEBUG)
-```
+1. Download the latest release
+2. Navigate to **Plugins** > Smart Data Quality > Settings
+3. Click **Replace with ZIP**
+4. Upload the new version
+5. Confirm replacement
 
-## 📊 Expected Performance
-
-### Typical Results (10,000 row dataset, 14 columns):
-
-| Metric | Value |
-|--------|-------|
-| **Profiling Time** | 1-2 seconds |
-| **Rule Generation** | <1 second |
-| **API Creation** | 5-10 seconds |
-| **Total Time** | 10-15 seconds |
-| **Rules Generated** | 50-54 rules |
-| **Success Rate** | 90-96% |
-
-### By Rule Type:
-
-| Rule Type | Count |
-|-----------|-------|
-| Numeric ranges | 20-30 |
-| Not-null checks | 10-15 |
-| Categorical | 3-5 |
-| Uniqueness | 1-2 |
-| Dataset-level | 2 |
-| Custom Python | 0-2 |
-
-## 🔧 Configuration Options
-
-### Adjust in runnable.json:
-
-```json
-{
-  "sample_size": {
-    "defaultValue": 10000,  // Change default sample size
-  },
-  "strictness": {
-    "defaultValue": "balanced"  // Change default strictness
-  }
-}
-```
-
-### Adjust in rule_generator.py:
-
-```python
-# Sigma multipliers for strictness levels
-self.sigma_multipliers = {
-    'lenient': 5.0,   // Increase for wider ranges
-    'balanced': 3.0,  // Standard setting
-    'strict': 2.0     // Decrease for tighter ranges
-}
-```
-
-## 📝 Next Steps
-
-After successful installation and testing:
-
-1. **Document** in your team wiki
-2. **Train** users on the macro
-3. **Establish** best practices for your organization
-4. **Monitor** rule effectiveness over time
-5. **Iterate** based on feedback
-
-## 🆘 Support
-
-For help:
-- Check Dataiku logs: `$DATAIKU_HOME/run/backend.log`
-- Review plugin code in dev editor
-- Contact plugin maintainer
-- Open GitHub issue
-
-## 📚 Additional Resources
-
-- [Dataiku Plugin Documentation](https://doc.dataiku.com/dss/latest/plugins/)
-- [Data Quality API Reference](https://developer.dataiku.com/latest/api-reference/)
-- [Plugin Development Tutorial](https://developer.dataiku.com/latest/tutorials/plugins/)
+Existing rules and configurations will be preserved during upgrades.
