@@ -329,7 +329,9 @@ You (the agent) are responsible for converting business logic into Python pandas
             python_code = textwrap.dedent(f'''\
                 def process(last_values, dataset, partition_id):
                     """
-                    [BUSINESS RULE]
+                    [AI-GENERATED BUSINESS RULE]
+                    This metadata was automatically generated based on user input.
+                    
                     Business Rule: {business_rule}
                     Justification: {justification}
                     Created: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
