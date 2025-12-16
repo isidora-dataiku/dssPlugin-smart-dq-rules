@@ -78,4 +78,4 @@ For issues or feature requests, please contact the plugin maintainer or open an 
 
 ## Version
 
-Current version: 0.2.0
+Current version: 0.2.1
