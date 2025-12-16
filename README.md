@@ -63,7 +63,7 @@ Agent: Creates rule with business justification stored in metadata
 **Macro - Smart DQ Rules Generator**:
 * String length rules (ColumnLengthInRangeRule) are not supported by the Dataiku API and will be marked for future implementation.
 * Date validation rules (ColumnDateNotInFutureRule) are not supported by the Dataiku API and will be marked for future implementation.
-* S3 and Spark datasets only support dataset-level rules due to Dataiku API limitations.
+* S3 and Spark datasets only support dataset-level rules due to Dataiku API limitations. The rules will still be created, but may error out when rules are computed.
 * Wide datasets are limited to 500 columns to prevent memory issues.
 
 **Agent Tool - Create Business Rules**:
