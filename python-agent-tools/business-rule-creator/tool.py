@@ -270,7 +270,9 @@ You (the agent) are responsible for converting business logic into Python pandas
                 }
             
             # SECURITY FIX: Use restricted eval with limited scope
-            safe_locals = {"df": df}
+            # Import pandas for the eval context
+            import pandas as pd
+            safe_locals = {"df": df, "pd": pd}
             safe_globals = {
                 "__builtins__": None  # Block access to open, import, exec, etc.
             }
