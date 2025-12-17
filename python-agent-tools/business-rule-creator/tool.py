@@ -23,15 +23,45 @@ class BusinessRuleCreator(BaseAgentTool):
         
     def get_descriptor(self, tool):
         """Define the tool's interface for the LLM"""
+        # Get dataset info to inject into description
+        try:
+            dataset = dataiku.Dataset(self.dataset_name)
+            schema = dataset.read_schema()
+            
+            # Build column information including metadata
+            column_info = []
+            for col in schema:
+                col_desc = f"- {col['name']} (type: {col['type']})"
+                if col.get('comment'):
+                    col_desc += f" - {col['comment']}"
+                column_info.append(col_desc)
+            
+            columns_text = "\n".join(column_info)
+            
+            dataset_context = f"""
+DATASET INFORMATION:
+Dataset: {self.dataset_name}
+
+Available Columns:
+{columns_text}
+
+Use the column names and metadata above to interpret the user's natural language requests. Map business terms (e.g., "foot traffic", "average withdrawals") to the actual column names without asking the user for technical details.
+"""
+        except Exception as e:
+            self.logger.warning(f"Could not load dataset schema: {e}")
+            dataset_context = f"Dataset: {self.dataset_name}"
+        
         return {
-            "description": """Create or analyze a custom data quality rule. You must provide the Python condition - this tool does not parse natural language.
+            "description": f"""{dataset_context}
+
+Create or analyze a custom data quality rule. You must provide the Python condition - this tool does not parse natural language.
 
 Use this tool to:
 - Analyze impact: See how many rows violate a condition
 - Create rule: Actually create the data quality rule
 - Refine: Update a condition and re-analyze
 
-You (the agent) are responsible for converting business logic into Python pandas conditions.""",
+You (the agent) are responsible for converting business logic into Python pandas conditions using the column information provided above.""",
             
             "inputSchema": {
                 "type": "object",
