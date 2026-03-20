@@ -414,11 +414,11 @@ You (the agent) are responsible for converting business logic into Python pandas
                         # Determine status
                         if violation_count == 0:
                             status = 'OK'
-                            message = f'All {{total_rows}} rows comply with business rule: {business_rule}'
+                            message = f"""All {{total_rows}} rows comply with business rule: {business_rule}"""
                         else:
                             violation_pct = (violation_count / total_rows * 100) if total_rows > 0 else 0
                             status = '{"ERROR" if severity == "ERROR" else "WARNING"}'
-                            message = f'{{violation_count}} rows ({{violation_pct:.1f}}%) violate rule: {business_rule}'
+                            message = f"""{{violation_count}} rows ({{violation_pct:.1f}}%) violate rule: {business_rule}"""
 
                         return status, message
 
