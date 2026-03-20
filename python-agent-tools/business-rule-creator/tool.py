@@ -369,8 +369,8 @@ You (the agent) are responsible for converting business logic into Python pandas
             dataset_handle = project.get_dataset(dataset)
             dq_ruleset = dataset_handle.get_data_quality_rules()
 
-            # Add [BR] tag to rule name
-            rule_name_with_tag = f"{rule_name} [BR]"
+            # Add [AI] tag to rule name
+            rule_name_with_tag = f"{rule_name} [AI]"
 
             # SECURITY FIX: Sanitize condition - remove newlines, limit to single line
             clean_condition = python_condition.replace("\n", " ").replace("\r", " ").strip()

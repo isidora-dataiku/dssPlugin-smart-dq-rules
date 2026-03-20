@@ -47,7 +47,7 @@ To install the Smart Data Quality Plugin, follow these steps:
 3. **Configure Tool** (Optional): Choose a default target dataset (optional). You can override this on a per-request basis.
 4. **Describe Rule**: Tell the agent your business rule in plain English (e.g., "customers under age 18 are not allowed").
 5. **Analyze Impact**: The agent converts your rule to a pandas condition and shows violation counts. Specify the target dataset if not configured.
-6. **Refine or Create**: Request adjustments or approve creation. Rules are tagged with [BR] for easy identification.
+6. **Refine or Create**: Request adjustments or approve creation. Rules are tagged with [AI] for easy identification.
 
 **Dataset Specification**:
 * You can configure a default dataset when setting up the tool
