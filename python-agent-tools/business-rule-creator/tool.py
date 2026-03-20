@@ -24,21 +24,24 @@ class BusinessRuleCreator(BaseAgentTool):
     def get_descriptor(self, tool):
         """Define the tool's interface for the LLM"""
         # Get dataset info to inject into description
-        try:
-            dataset = dataiku.Dataset(self.dataset_name)
-            schema = dataset.read_schema()
-            
-            # Build column information including metadata
-            column_info = []
-            for col in schema:
-                col_desc = f"- {col['name']} (type: {col['type']})"
-                if col.get('comment'):
-                    col_desc += f" - {col['comment']}"
-                column_info.append(col_desc)
-            
-            columns_text = "\n".join(column_info)
-            
-            dataset_context = f"""
+        dataset_context = ""
+        
+        if self.dataset_name:
+            try:
+                dataset = dataiku.Dataset(self.dataset_name)
+                schema = dataset.read_schema()
+                
+                # Build column information including metadata
+                column_info = []
+                for col in schema:
+                    col_desc = f"- {col['name']} (type: {col['type']})"
+                    if col.get('comment'):
+                        col_desc += f" - {col['comment']}"
+                    column_info.append(col_desc)
+                
+                columns_text = "\n".join(column_info)
+                
+                dataset_context = f"""
 DATASET INFORMATION:
 Dataset: {self.dataset_name}
 
@@ -47,9 +50,14 @@ Available Columns:
 
 Use the column names and metadata above to interpret the user's natural language requests. Map business terms (e.g., "foot traffic", "average withdrawals") to the actual column names without asking the user for technical details.
 """
-        except Exception as e:
-            self.logger.warning(f"Could not load dataset schema: {e}")
-            dataset_context = f"Dataset: {self.dataset_name}"
+            except Exception as e:
+                self.logger.warning(f"Could not load dataset schema: {e}")
+                dataset_context = f"Dataset: {self.dataset_name}"
+        else:
+            dataset_context = """DATASET INFORMATION:
+Dataset will be provided at runtime via the 'dataset' parameter.
+
+Ensure you provide the target dataset name in your request."""
         
         return {
             "description": f"""{dataset_context}
@@ -96,6 +104,10 @@ You (the agent) are responsible for converting business logic into Python pandas
                         "type": "string",
                         "enum": ["ERROR", "WARNING"],
                         "description": "Severity level. Defaults to WARNING."
+                    },
+                    "dataset": {
+                        "type": "string",
+                        "description": "Target dataset name for the rule. If not provided, uses the configured default dataset."
                     }
                 },
                 "required": ["action", "python_condition", "columns_used", "rule_name", "business_rule"]
@@ -116,6 +128,16 @@ You (the agent) are responsible for converting business logic into Python pandas
                     "output": json.dumps({
                         "success": False,
                         "error": "Invalid action. Must be 'analyze' or 'create'"
+                    })
+                }
+            
+            # Get dataset from input or fall back to config
+            dataset_name = args.get("dataset", "").strip() or self.dataset_name
+            if not dataset_name:
+                return {
+                    "output": json.dumps({
+                        "success": False,
+                        "error": "dataset must be provided in input or configured in tool settings"
                     })
                 }
             
@@ -152,7 +174,7 @@ You (the agent) are responsible for converting business logic into Python pandas
                 }
             
             # Get dataset
-            dataset = dataiku.Dataset(self.dataset_name)
+            dataset = dataiku.Dataset(dataset_name)
             
             # Get schema
             schema = dataset.read_schema()
@@ -204,7 +226,7 @@ You (the agent) are responsible for converting business logic into Python pandas
             # Create the rule
             elif action == "create":
                 result = self._create_dq_rule(
-                    dataset=self.dataset_name,
+                    dataset=dataset_name,
                     rule_name=rule_name,
                     business_rule=business_rule,
                     justification=justification,
