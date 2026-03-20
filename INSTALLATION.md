@@ -39,8 +39,10 @@ To verify:
    * Click **+ Agent Tool**
    * Select **Create Business Rules** from the list
 
-3. **Configure the Tool**:
-   * **Dataset**: Select the target dataset for rule creation
+3. **Configure the Tool** (Optional):
+   * **Dataset**: Select a default target dataset (optional)
+     * If configured, the tool will default to this dataset
+     * You can override this by specifying a different dataset in each request
    * **Description** (optional): Add context about the tool's purpose
    * Click **Save**
 
@@ -48,6 +50,7 @@ To verify:
    * Go to **GenAI** > **Agents**
    * Create a new agent or edit an existing one
    * In the agent configuration, add the "Create Business Rules" tool
+   * When invoking the tool, you can specify which dataset to target (with or without a configured default)
    * Save the agent
 
 ## Code Environment

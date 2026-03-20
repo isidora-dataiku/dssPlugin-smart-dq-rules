@@ -44,10 +44,15 @@ To install the Smart Data Quality Plugin, follow these steps:
 
 1. **Navigate to Agent Tools**: In your Dataiku project, click the GenAI dropdown in the top left corner of the top bar and select "Agent Tools".
 2. **Add Tool**: Click "+ Agent Tool" and select "Create Business Rules" from the list.
-3. **Configure Tool**: Choose the target dataset and add an optional description for the tool.
+3. **Configure Tool** (Optional): Choose a default target dataset (optional). You can override this on a per-request basis.
 4. **Describe Rule**: Tell the agent your business rule in plain English (e.g., "customers under age 18 are not allowed").
-4. **Analyze Impact**: The agent converts your rule to a pandas condition and shows violation counts.
-5. **Refine or Create**: Request adjustments or approve creation. Rules are tagged with [BR] for easy identification.
+5. **Analyze Impact**: The agent converts your rule to a pandas condition and shows violation counts. Specify the target dataset if not configured.
+6. **Refine or Create**: Request adjustments or approve creation. Rules are tagged with [BR] for easy identification.
+
+**Dataset Specification**:
+* You can configure a default dataset when setting up the tool
+* Each request can specify a different dataset to override the default
+* If no dataset is configured and none is provided in the request, the tool will return an error
 
 **Example Workflow**:
 ```
@@ -67,10 +72,10 @@ Agent: Creates rule with business justification stored in metadata
 * Wide datasets are limited to 500 columns to prevent memory issues.
 
 **Agent Tool - Create Business Rules**:
-* Requires proper configuration of the target dataset in tool settings.
-* Complex multi-table joins or subqueries are not supported in pandas conditions.
-* The agent must have access to the dataset schema to validate column names.
-* Currently supports single dataset only. Future versions will include multi-dataset support with SQL-based analysis and Python-based rule creation.
+* Dataset can be configured at tool setup time or provided per-request (runtime override supported)
+* Complex multi-table joins or subqueries are not supported in pandas conditions
+* The agent must have access to the dataset schema to validate column names
+* Currently supports single dataset only. Future versions will include multi-dataset support with SQL-based analysis and Python-based rule creation
 
 ## Support
 
